@@ -9,40 +9,29 @@
 //    <div class="tab">topic here</div>
 
 
-const divTopics = document.querySelector('.topics')
+axios.get('https://lambda-times-backend.herokuapp.com/topics')
 
-
-const myTopics = ["https://lambda-times-backend.herokuapp.com/topics"]
-
-myTopics.forEach(myData => {
-    axios.get(myData).then(data => {
-
-        console.log('Topics:', data.data.topics)
-
-        divTopics.appendChild(createTopics(data.data.topics));
-
-    })
-        .catch(error => {
-            // Handles failure:
-            console.log("The Server is currently down", error);
+    .then(response => {
+        // console.log(response);
+        const topics = [];
+        response.data.topics.forEach(dataTopic => {
+            topics.push(dataTopic)
+            // console.log(`added ${dataTopic} to topics array`)
         });
-});
+        topics.forEach(topic => {
+            // console.log(topic);
+            createTopics(topic)
+        })
+    })
 
+    .catch(error => {
+        console.log('This just in: something is wrong.', error)
+    })
 
-
-function createTopics(myTopics) {
-    // create the elements
-    const topicTabs = document.createElement('div')
-
-    // set the styles
-    topicTabs.classList.add('tab')
-
-    // set the content
-    topicTabs.textContent = myTopics;
-
-
-    // put together
-
-
-    return topicTabs
+function createTopics(topic) {
+    const divTopics = document.querySelector('.topics');
+    const topicTabs = document.createElement('div');
+    topicTabs.textContent = topic;
+    topicTabs.classList.add('tab');
+    divTopics.appendChild(topicTabs)
 }

@@ -18,54 +18,54 @@
 //
 // Create a card for each of the articles and add the card to the DOM.
 
-const articleContainer = document.querySelector('.cards-container')
+axios.get('https://lambda-times-backend.herokuapp.com/articles')
+
+    .then(response => {
+        const articlesInfo = response.data.articles;
+        console.log('articlesInfo: ', articlesInfo);
+        articlesInfo.bootstrap.forEach(createArticle);
+        articlesInfo.javascript.forEach(createArticle);
+        articlesInfo.jquery.forEach(createArticle);
+        articlesInfo.node.forEach(createArticle);
+        articlesInfo.technology.forEach(createArticle);
+    })
+
+    .catch(error => {
+        console.log('Error creating cards for articles:', error)
+    })
 
 
-const allArticles = ["https://lambda-times-backend.herokuapp.com/articles/"];
 
-allArticles.forEach(function (index, element) {
-    axios.get(index, element)
-        .then(data => {
-
-            console.log(data.data.articles)
-            const articleData = data.data.articles.javascript[2];
-            articleContainer.appendChild(createArticles(articleData));
-        })
-        .catch(error => {
-            // Handles failure:
-            console.log("The Server is currently down", error);
-        });
-})
-
-
-function createArticles(allArticles) {
-    // create the elements
+function createArticle(article) {
+    // create DOM elements
+    const cardsContainer = document.querySelector('.cards-container');
     const card = document.createElement('div')
-    const CardHeadline = document.createElement('div')
+    const hl = document.createElement('div')
     const author = document.createElement('div')
-    const imgContainer = document.createElement('div')
+    const imgCtnr = document.createElement('div')
     const imgSource = document.createElement('img')
     const AuthName = document.createElement('span')
 
+    // add elements to DOM structure
+    cardsContainer.appendChild(card);
+    card.appendChild(hl);
+    card.appendChild(author);
+    author.appendChild(imgCtnr);
+    author.appendChild(imgSource);
+    author.appendChild(AuthName);
 
-    // set the styles
-    card.classList.add('card')
-    CardHeadline.classList.add('headline')
-    author.classList.add('author')
-    imgContainer.classList.add('img-container')
+    // set content
+    hl.textContent = article.headline;
+    const authorName = article.authorName;
+    AuthName.textContent = `By: ${authorName}`;
+    imgSource.src = article.authorPhoto;
 
-    // set the content
-    author.textContent = allArticles.authorName;
-    imgSource.textContent = allArticles.authorPhoto;
-    CardHeadline.textContent = allArticles.headline;
+    // set classes, styles & attributes
+    card.classList.add('card');
+    hl.classList.add('headline');
+    author.classList.add('author');
+    imgCtnr.classList.add('img-container');
+    imgSource.style.width = '40px';
 
-    // put together
-    card.appendChild(CardHeadline)
-    card.appendChild(author)
-    author.appendChild(imgContainer)
-    imgContainer.appendChild(imgSource)
-    author.appendChild(AuthName)
-
-
-    return card
+    // return card // <- is this needed?
 }
